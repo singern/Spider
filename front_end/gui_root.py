@@ -1,58 +1,60 @@
 from tkinter import *
-
+from tkinter import filedialog
+from core.main import *
 
 class SpiderGui():
 
     def __init__(self, NAME, VERSION):
-        frame_main = Tk()
-        frame_main.title(NAME + " - " + VERSION)
-        
-        threadCount = IntVar()
+        main = Tk()
+        main.title(NAME + " - " + VERSION)
 
         w = 1000  # width for the Tk root
         h = 700  # height for the Tk root
 
+        thread_count = 0
+        remain_in_domain='true'
+
         #******************* LAYOUT CREEATION **********************************
 
-        frame_main.rowconfigure(0, weight=0)
-        frame_main.rowconfigure(1, weight=150)
-        frame_main.rowconfigure(2, weight=0)
-        frame_main.rowconfigure(3, weight=10)
+        main.rowconfigure(0, weight=0)
+        main.rowconfigure(1, weight=150)
+        main.rowconfigure(2, weight=0)
+        main.rowconfigure(3, weight=10)
 
-        frame_main.columnconfigure(0, weight=1)
-        frame_main.columnconfigure(1, weight=1)
-        frame_main.columnconfigure(2, weight=1)
+        main.columnconfigure(0, weight=1)
+        main.columnconfigure(1, weight=1)
+        main.columnconfigure(2, weight=1)
 
         RELIEF_SETTING=SUNKEN
 
-        frame_main_commandcenter_label = Label(text="Command Center")
-        frame_main_commandcenter_label.grid(row=0, column=0, sticky=N)
-        frame_main_commandcenter = Frame(frame_main, bd=1, relief=RELIEF_SETTING)
-        frame_main_commandcenter.grid(row=1, column=0, sticky=N+S+E+W)
+        main_commandcenter_label = Label(text="Command Center")
+        main_commandcenter_label.grid(row=0, column=0, sticky=N)
+        main_commandcenter = Frame(main, bd=1, relief=RELIEF_SETTING)
+        main_commandcenter.grid(row=1, column=0, sticky=N+S+E+W)
 
-        frame_main_statistics_label = Label(text="Application Statistics",width=round(w / 3))
-        frame_main_statistics_label.grid(row=2, column=0, sticky=N)
-        frame_main_statistics = Frame(frame_main, bd=1, relief=RELIEF_SETTING)
-        frame_main_statistics.grid(row=3, column=0, sticky=N+S+E+W)
+        main_statistics_label = Label(text="Application Statistics",width=round(w / 3))
+        main_statistics_label.grid(row=2, column=0, sticky=N)
+        main_statistics = Frame(main, bd=1, relief=RELIEF_SETTING)
+        main_statistics.grid(row=3, column=0, sticky=N+S+E+W)
 
-        frame_main_threadinfo_label = Label(text="Live Thread Information")
-        frame_main_threadinfo_label.grid(row=0, column=1, columnspan=2, sticky=N)
-        frame_main_threadinfo = Frame(frame_main, bd=1, relief=RELIEF_SETTING, height=round(h / 2))
-        frame_main_threadinfo.grid(row=1, column=1, columnspan=2, sticky=N+S+E+W)
+        main_threadinfo_label = Label(text="Live Thread Information")
+        main_threadinfo_label.grid(row=0, column=1, columnspan=2, sticky=N)
+        main_threadinfo = Frame(main, bd=1, relief=RELIEF_SETTING, height=round(h / 2))
+        main_threadinfo.grid(row=1, column=1, columnspan=2, sticky=N+S+E+W)
 
-        frame_main_queue_label = Label(text="Queue Feed",width=round(w / 3))
-        frame_main_queue_label.grid(row=2, column=1, sticky=N)
-        frame_main_queue = Frame(frame_main, bd=1, relief=RELIEF_SETTING)
-        frame_main_queue.grid(row=3, column=1, sticky=N+S+E+W)
+        main_queue_label = Label(text="Queue Feed",width=round(w / 3))
+        main_queue_label.grid(row=2, column=1, sticky=N)
+        main_queue = Frame(main, bd=1, relief=RELIEF_SETTING)
+        main_queue.grid(row=3, column=1, sticky=N+S+E+W)
 
-        frame_main_crawled_label = Label(text="Crawled Feed",width=round(w / 3))
-        frame_main_crawled_label.grid(row=2, column=2, sticky=N)
-        frame_main_crawled = Frame(frame_main, bd=1, relief=RELIEF_SETTING, height=round(h / 2))
-        frame_main_crawled.grid(row=3, column=2, sticky=N+S+E+W)
+        main_crawled_label = Label(text="Crawled Feed",width=round(w / 3))
+        main_crawled_label.grid(row=2, column=2, sticky=N)
+        main_crawled = Frame(main, bd=1, relief=RELIEF_SETTING, height=round(h / 2))
+        main_crawled.grid(row=3, column=2, sticky=N+S+E+W)
 
         # get screen width and height
-        ws = frame_main.winfo_screenwidth()  # width of the screen
-        hs = frame_main.winfo_screenheight()  # height of the screen
+        ws = main.winfo_screenwidth()  # width of the screen
+        hs = main.winfo_screenheight()  # height of the screen
 
         # calculate x and y coordinates for the Tk root window
         x = (ws / 2) - (w / 2)
@@ -60,12 +62,12 @@ class SpiderGui():
 
         # set the dimensions of the screen
         # and where it is placed
-        frame_main.geometry('%dx%d+%d+%d' % (w, h, x, y))
+        main.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
         # *******************  END LAYOUT CREATION *******************************
 
         # add a frame and put a text area into it
-        queue_textFrame = Frame(frame_main_queue)
+        queue_textFrame = Frame(main_queue)
         queuetextarea = Text(queue_textFrame)
 
         # add a vertical scroll bar to the text area
@@ -91,7 +93,7 @@ class SpiderGui():
             queuetextarea.configure(state=DISABLED)
 
         # add a frame and put a text area into it
-        crawled_textFrame = Frame(frame_main_crawled)
+        crawled_textFrame = Frame(main_crawled)
         crawledtextarea = Text(crawled_textFrame)
 
         # add a vertical scroll bar to the text area
@@ -117,202 +119,226 @@ class SpiderGui():
             crawledtextarea.configure(state=DISABLED)
 
         # **** LIST BOX CREATIOON ****
-        threadlist = Listbox(frame_main_threadinfo)
+        threadlist = Listbox(main_threadinfo)
         threadlist.pack(expand=1, fill=BOTH)
-
-
 
         #Threads columns
         # thread number     parsing/crawling/queued/crawled     url
 
         # *** COMMAND & CONTROL ****
         #
-        #Directory
-        #
-        #Threads selector as buttons with 1/2/4/8/16/32/64/128
-        #
-        #Checkbox for 'stay in domain'
-        #
-        #Start Pause Stop
-        #
-        #Export
+        #Export Results
 
-        frame_main_commandcenter.columnconfigure(0, weight=1)
+        main_commandcenter.columnconfigure(0, weight=0)
+        main_commandcenter.rowconfigure(1, weight=1)
+        main_commandcenter.rowconfigure(2, weight=1)
+        main_commandcenter.rowconfigure(3, weight=1)
+        main_commandcenter.rowconfigure(4, weight=1)
+        main_commandcenter.rowconfigure(5, weight=1)
+        main_commandcenter.rowconfigure(6, weight=1)
+        main_commandcenter.rowconfigure(7, weight=1)
+        main_commandcenter.rowconfigure(8, weight=1)
+        main_commandcenter.rowconfigure(9, weight=1)
+        main_commandcenter.rowconfigure(10, weight=1)
 
-        frame_main_commandcenter_control_label = Label(frame_main_commandcenter, text="Execution")
-        frame_main_commandcenter_control_label.grid(row=0)
-        frame_main_commandcenter_control_container = Frame(frame_main_commandcenter)
-        frame_main_commandcenter_control_container.grid(row=1)
-        frame_main_commandcenter_control_start = Button(frame_main_commandcenter_control_container, text="Start")
-        frame_main_commandcenter_control_start.pack(side=LEFT)
-        frame_main_commandcenter_control_pause = Button(frame_main_commandcenter_control_container, text="Pause")
-        frame_main_commandcenter_control_pause.pack(side=LEFT)
-        frame_main_commandcenter_control_stop = Button(frame_main_commandcenter_control_container, text="Stop")
-        frame_main_commandcenter_control_stop.pack(side=LEFT)
+        main_commandcenter = Frame(main_commandcenter)
+        main_commandcenter.pack()
 
-        frame_main_commandcenter_domaintocrawl_label = Label(frame_main_commandcenter, text="Target Domain")
-        frame_main_commandcenter_domaintocrawl_label.grid(row=2)
-        frame_main_commandcenter_domaintocrawl_textbox = Entry(frame_main_commandcenter)
-        frame_main_commandcenter_domaintocrawl_textbox.grid(row=3)
+        main_commandcenter_control_label = Label(main_commandcenter, text="Execution")
+        main_commandcenter_control_label.grid(row=0)
+        main_commandcenter_control_container = Frame(main_commandcenter)
+        main_commandcenter_control_container.grid(row=1)
+        main_commandcenter_control_start = Button(main_commandcenter_control_container, text="Start")
+        main_commandcenter_control_start.pack(side=LEFT, fill=BOTH, padx=5)
+        main_commandcenter_control_pause = Button(main_commandcenter_control_container, text="Pause")
+        main_commandcenter_control_pause.pack(side=LEFT, fill=BOTH, padx=5)
+        main_commandcenter_control_stop = Button(main_commandcenter_control_container, text="Stop")
+        main_commandcenter_control_stop.pack(side=LEFT, fill=BOTH, padx=5)
 
-        def setThreadButtonColor(thread_count):
+        def execute_start():
+            HOMEPAGE=main_commandcenter_domaintocrawl_textbox.get()
+            Spider("PROJECTNAME", HOMEPAGE, get_domain_name(HOMEPAGE))
+            create_workers
+            crawl
+        def execute_pause():
+            pass
+        def execute_stop():
+            pass
 
-            frame_main_commandcenter_threads_button1.configure(bg="red")
-            frame_main_commandcenter_threads_button2.configure(bg="red")
-            frame_main_commandcenter_threads_button4.configure(bg="red")
-            frame_main_commandcenter_threads_button8.configure(bg="red")
-            frame_main_commandcenter_threads_button16.configure(bg="red")
-            frame_main_commandcenter_threads_button32.configure(bg="red")
-            frame_main_commandcenter_threads_button64.configure(bg="red")
-            frame_main_commandcenter_threads_button128.configure(bg="red")
+        main_commandcenter_control_start.configure(command=execute_start)
 
-            if not thread_count == 1:
-                frame_main_commandcenter_threads_button1.configure(bg="blue")
+        main_commandcenter_domaintocrawl_label = Label(main_commandcenter, text="Target Domain")
+        main_commandcenter_domaintocrawl_label.grid(row=2)
+        main_commandcenter_domaintocrawl_textbox = Entry(main_commandcenter)
+        main_commandcenter_domaintocrawl_textbox.grid(row=3)
 
-            if not thread_count == 2:
-                frame_main_commandcenter_threads_button2.configure(bg="blue")
+        check_var=IntVar()
 
-            if not thread_count == 4:
-                frame_main_commandcenter_threads_button4.configure(bg="blue")
+        main_commandcenter_remainindomain_checkbox = Checkbutton(main_commandcenter, text="Remain In Domain",
+                                                                                 variable=check_var)
+        main_commandcenter_remainindomain_checkbox.invoke()
+        main_commandcenter_remainindomain_checkbox.grid(row=4)
 
-            if not thread_count == 8:
-                frame_main_commandcenter_threads_button8.configure(bg="blue")
+        main_commandcenter_remainindomain_checkbox.configure(command=lambda: print("State Of Checkbox Is: " + str(check_var.get())))
 
-            if not thread_count == 16:
-                frame_main_commandcenter_threads_button16.configure(bg="blue")
+        main_commandcenter_threads_label = Label(main_commandcenter, text="Thread Control")
+        main_commandcenter_threads_label.grid(row=5)
+        main_commandcenter_threads_container = Frame(main_commandcenter)
+        main_commandcenter_threads_container.grid(row=6)
+        main_commandcenter_threads_container.columnconfigure(1, weight=1)
+        main_commandcenter_threads_button1 = Button(main_commandcenter_threads_container, text="1")
+        main_commandcenter_threads_button1.grid(column=1, row=0, padx=2)
+        main_commandcenter_threads_button2 = Button(main_commandcenter_threads_container, text="2")
+        main_commandcenter_threads_button2.grid(column=2, row=0, padx=2)
+        main_commandcenter_threads_button4 = Button(main_commandcenter_threads_container, text="4")
+        main_commandcenter_threads_button4.grid(column=3, row=0, padx=2)
+        main_commandcenter_threads_button8 = Button(main_commandcenter_threads_container, text="8")
+        main_commandcenter_threads_button8.grid(column=4, row=0, padx=2)
+        main_commandcenter_threads_button16 = Button(main_commandcenter_threads_container, text="16")
+        main_commandcenter_threads_button16.grid(column=5, row=0, padx=2)
+        main_commandcenter_threads_button32 = Button(main_commandcenter_threads_container, text="32")
+        main_commandcenter_threads_button32.grid(column=6, row=0, padx=2)
+        main_commandcenter_threads_button64 = Button(main_commandcenter_threads_container, text="64")
+        main_commandcenter_threads_button64.grid(column=7, row=0, padx=2)
+        main_commandcenter_threads_button128 = Button(main_commandcenter_threads_container, text="128")
+        main_commandcenter_threads_button128.grid(column=8, row=0, padx=2)
 
-            if not thread_count == 32:
-                frame_main_commandcenter_threads_button32.configure(bg="blue")
+        color_blue = '#EEEEFE'
+        color_red = '#FFEEEE'
 
-            if not thread_count == 64:
-                frame_main_commandcenter_threads_button64.configure(bg="blue")
+        main_commandcenter_threads_button1.configure(bg=color_blue)
+        main_commandcenter_threads_button2.configure(bg=color_blue)
+        main_commandcenter_threads_button4.configure(bg=color_blue)
+        main_commandcenter_threads_button8.configure(bg=color_blue)
+        main_commandcenter_threads_button16.configure(bg=color_blue)
+        main_commandcenter_threads_button32.configure(bg=color_blue)
+        main_commandcenter_threads_button64.configure(bg=color_blue)
+        main_commandcenter_threads_button128.configure(bg=color_blue)
 
-            if not thread_count == 128:
-                frame_main_commandcenter_threads_button128.configure(bg="blue")
+        def set_thread(thread_number):
 
-        def setThread_1():
-            if not self.threadCount == 1:
-                setThreadButtonColor(1)
-                threadCount = 1
-            else:
-                setThreadButtonColor(0)
+            def set_selected_button(button):
+                main_commandcenter_threads_button1.configure(bg=color_blue)
+                main_commandcenter_threads_button2.configure(bg=color_blue)
+                main_commandcenter_threads_button4.configure(bg=color_blue)
+                main_commandcenter_threads_button8.configure(bg=color_blue)
+                main_commandcenter_threads_button16.configure(bg=color_blue)
+                main_commandcenter_threads_button32.configure(bg=color_blue)
+                main_commandcenter_threads_button64.configure(bg=color_blue)
+                main_commandcenter_threads_button128.configure(bg=color_blue)
 
-        def setThread_2():
-            if not self.threadCount == 2:
-                setThreadButtonColor(2)
-                threadCount = 2
-            else:
-                setThreadButtonColor(0)
+                if button == 1:
+                    main_commandcenter_threads_button1.configure(bg=color_red)
+                elif button == 2:
+                    main_commandcenter_threads_button2.configure(bg=color_red)
+                elif button == 4:
+                    main_commandcenter_threads_button4.configure(bg=color_red)
+                elif button == 8:
+                    main_commandcenter_threads_button8.configure(bg=color_red)
+                elif button == 16:
+                    main_commandcenter_threads_button16.configure(bg=color_red)
+                elif button == 32:
+                    main_commandcenter_threads_button32.configure(bg=color_red)
+                elif button == 64:
+                    main_commandcenter_threads_button64.configure(bg=color_red)
+                elif button == 128:
+                    main_commandcenter_threads_button128.configure(bg=color_red)
+                else:
+                    pass
 
-        def setThread_4():
-            if not self.threadCount == 4:
-                setThreadButtonColor(4)
-                threadCount = 4
-            else:
-                setThreadButtonColor(0)
+            if thread_number == 1:
+                thread_count = 1
+                set_selected_button(1)
+            elif thread_number == 2:
+                thread_count = 2
+                set_selected_button(2)
+            elif thread_number == 4:
+                thread_count = 4
+                set_selected_button(4)
+            elif thread_number == 8:
+                thread_count = 8
+                set_selected_button(8)
+            elif thread_number == 16:
+                thread_count = 16
+                set_selected_button(16)
+            elif thread_number == 32:
+                thread_count = 32
+                set_selected_button(32)
+            elif thread_number == 64:
+                thread_count = 64
+                set_selected_button(64)
+            elif thread_number == 128:
+                thread_count = 128
+                set_selected_button(128)
 
-        def setThread_8():
-            if not self.threadCount == 8:
-                setThreadButtonColor(8)
-                threadCount = 8
-            else:
-                setThreadButtonColor(0)
+            print("Thread Count Set To: " + str(thread_count))
 
-        def setThread_16():
-            if not self.threadCount == 16:
-                setThreadButtonColor(16)
-                threadCount = 16
-            else:
-                setThreadButtonColor(0)
+        set_thread(8)
 
-        def setThread_32():
-            if not self.threadCount == 32:
-                setThreadButtonColor(32)
-                threadCount = 32
-            else:
-                setThreadButtonColor(0)
+        main_commandcenter_threads_button1.configure(command=lambda: set_thread(1))
+        main_commandcenter_threads_button2.configure(command=lambda: set_thread(2))
+        main_commandcenter_threads_button4.configure(command=lambda: set_thread(4))
+        main_commandcenter_threads_button8.configure(command=lambda: set_thread(8))
+        main_commandcenter_threads_button16.configure(command=lambda: set_thread(16))
+        main_commandcenter_threads_button32.configure(command=lambda: set_thread(32))
+        main_commandcenter_threads_button64.configure(command=lambda: set_thread(64))
+        main_commandcenter_threads_button128.configure(command=lambda: set_thread(128))
 
-        def setThread_64():
-            if not self.threadCount == 64:
-                setThreadButtonColor(64)
-                threadCount = 64
-            else:
-                setThreadButtonColor(0)
+        main_commandcenter_savedirectory_label = Label(main_commandcenter, text="Cache Dump / Save Directory")
+        main_commandcenter_savedirectory_label.grid(row=7)
+        main_commandcenter_savedirectory_container = Frame(main_commandcenter)
+        main_commandcenter_savedirectory_container.grid(row=8)
+        main_commandcenter_savedirectory_button = Button(main_commandcenter_savedirectory_container, text="Browse")
+        main_commandcenter_savedirectory_button.pack(side=LEFT, padx=5)
+        main_commandcenter_savedirectory_directory = Entry(main_commandcenter_savedirectory_container)
+        main_commandcenter_savedirectory_directory.pack(side=LEFT)
 
-        def setThread_128():
-            if not self.threadCount == 128:
-                setThreadButtonColor(128)
-                threadCount = 128
-            else:
-                setThreadButtonColor(0)
+        def set_working_directory():
+            working_directory = filedialog.askdirectory()
+            main_commandcenter_savedirectory_directory.delete(0, END)
+            main_commandcenter_savedirectory_directory.insert(0, working_directory)
+            print("Working Directory Set To: " + working_directory)
 
-        frame_main_commandcenter_threads_label = Label(frame_main_commandcenter, text="Thread Control")
-        frame_main_commandcenter_threads_label.grid(row=4)
-        frame_main_commandcenter_threads_container = Frame(frame_main_commandcenter)
-        frame_main_commandcenter_threads_container.grid(row=5)
-        frame_main_commandcenter_threads_container.columnconfigure(1, weight=1)
-        frame_main_commandcenter_threads_button1 = Button(frame_main_commandcenter_threads_container, text="1", command=setThread_1())
-        frame_main_commandcenter_threads_button1.grid(column=1, row=0)
-        frame_main_commandcenter_threads_button2 = Button(frame_main_commandcenter_threads_container, text="2")
-        frame_main_commandcenter_threads_button2.grid(column=2, row=0)
-        frame_main_commandcenter_threads_button4 = Button(frame_main_commandcenter_threads_container, text="4")
-        frame_main_commandcenter_threads_button4.grid(column=3, row=0)
-        frame_main_commandcenter_threads_button8 = Button(frame_main_commandcenter_threads_container, text="8")
-        frame_main_commandcenter_threads_button8.grid(column=4, row=0)
-        frame_main_commandcenter_threads_button16 = Button(frame_main_commandcenter_threads_container, text="16")
-        frame_main_commandcenter_threads_button16.grid(column=5, row=0)
-        frame_main_commandcenter_threads_button32 = Button(frame_main_commandcenter_threads_container, text="32")
-        frame_main_commandcenter_threads_button32.grid(column=6, row=0)
-        frame_main_commandcenter_threads_button64 = Button(frame_main_commandcenter_threads_container, text="64")
-        frame_main_commandcenter_threads_button64.grid(column=7, row=0)
-        frame_main_commandcenter_threads_button128 = Button(frame_main_commandcenter_threads_container, text="128")
-        frame_main_commandcenter_threads_button128.grid(column=8, row=0)
 
-        setThreadButtonColor(0)
 
-        remainindomain = 0
-        frame_main_commandcenter_remainindomain_checkbox = Checkbutton(frame_main_commandcenter, text="Remain In Domain",
-                                                                       variable = remainindomain, onvalue = 1, offvalue = 0)
-        frame_main_commandcenter_remainindomain_checkbox.invoke()
-        frame_main_commandcenter_remainindomain_checkbox.grid(row=6)
+        main_commandcenter_savedirectory_button.configure(command=set_working_directory)
 
-        frame_main_commandcenter_savedirectory_label = Label(frame_main_commandcenter, text="Cache Dump / Save Directory")
-        frame_main_commandcenter_savedirectory_button = Button(frame_main_commandcenter, text="Browse")
-        frame_main_commandcenter_savedirectory_directory = Entry(frame_main_commandcenter)
-
-        frame_main_commandcenter_export_button = Button(frame_main_commandcenter, text="Export Known Paths")
+        main_commandcenter_export_label = Label(main_commandcenter, text="Export")
+        main_commandcenter_export_label.grid(row=9)
+        main_commandcenter_export_button = Button(main_commandcenter, text="Export Execution Stats")
+        main_commandcenter_export_button.grid(row=10)
 
         # **** Statstics *****
 
-        #frame_main_statistics.rowconfigure(0, weight=1)
-        #frame_main_statistics.rowconfigure(1, weight=1)
-        #frame_main_statistics.rowconfigure(2, weight=1)
-        #frame_main_statistics.rowconfigure(3, weight=1)
+        #main_statistics.rowconfigure(0, weight=1)
+        #main_statistics.rowconfigure(1, weight=1)
+        #main_statistics.rowconfigure(2, weight=1)
+        #main_statistics.rowconfigure(3, weight=1)
 
-        frame_main_statistics.columnconfigure(0, weight=28)
-        frame_main_statistics.columnconfigure(1, weight=72)
+        main_statistics.columnconfigure(0, weight=28)
+        main_statistics.columnconfigure(1, weight=72)
 
-        frame_main_statistics_timerunning_label = Label(frame_main_statistics, text="Time Running:")
-        frame_main_statistics_timerunning_label.grid(row=0, column=0, sticky=E)
-        frame_main_statistics_timerunning_value = Label(frame_main_statistics, text="0:00")
-        frame_main_statistics_timerunning_value.grid(row=0, column=1, sticky=W)
+        main_statistics_timerunning_label = Label(main_statistics, text="Time Running:")
+        main_statistics_timerunning_label.grid(row=0, column=0, sticky=E)
+        main_statistics_timerunning_value = Label(main_statistics, text="0:00")
+        main_statistics_timerunning_value.grid(row=0, column=1, sticky=W)
 
-        frame_main_statistics_threadcount_label = Label(frame_main_statistics, text="Thread Count:")
-        frame_main_statistics_threadcount_label.grid(row=1, column=0, sticky=E)
-        frame_main_statistics_threadcount_value = Label(frame_main_statistics, text="0")
-        frame_main_statistics_threadcount_value.grid(row=1, column=1, sticky=W)
+        main_statistics_thread_count_label = Label(main_statistics, text="Thread Count:")
+        main_statistics_thread_count_label.grid(row=1, column=0, sticky=E)
+        main_statistics_thread_count_value = Label(main_statistics, text="0")
+        main_statistics_thread_count_value.grid(row=1, column=1, sticky=W)
 
-        frame_main_statistics_urlqueued_label = Label(frame_main_statistics, text="Queued URL Count:")
-        frame_main_statistics_urlqueued_label.grid(row=2, column=0, sticky=E)
-        frame_main_statistics_urlqueued_value = Label(frame_main_statistics, text="0")
-        frame_main_statistics_urlqueued_value.grid(row=2, column=1, sticky=W)
+        main_statistics_urlqueued_label = Label(main_statistics, text="Queued URL Count:")
+        main_statistics_urlqueued_label.grid(row=2, column=0, sticky=E)
+        main_statistics_urlqueued_value = Label(main_statistics, text="0")
+        main_statistics_urlqueued_value.grid(row=2, column=1, sticky=W)
 
-        frame_main_statistics_urlcralwed_label = Label(frame_main_statistics, text="Crawled URL Count:")
-        frame_main_statistics_urlcralwed_label.grid(row=3, column=0, sticky=E)
-        frame_main_statistics_urlcralwed_value = Label(frame_main_statistics, text="0")
-        frame_main_statistics_urlcralwed_value.grid(row=3, column=1, sticky=W)
+        main_statistics_urlcralwed_label = Label(main_statistics, text="Crawled URL Count:")
+        main_statistics_urlcralwed_label.grid(row=3, column=0, sticky=E)
+        main_statistics_urlcralwed_value = Label(main_statistics, text="0")
+        main_statistics_urlcralwed_value.grid(row=3, column=1, sticky=W)
 
         #Menu Bar potentially, im not sure what i would want to add to it yet
         # though so ill leave this blank for now
 
-        frame_main.mainloop()
+        main.mainloop()

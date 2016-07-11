@@ -1,8 +1,8 @@
 import threading
 from queue import Queue
-from spider import Spider
-from domain import *
-from general import *
+from core.spider import Spider
+from core.domain import *
+from core.general import *
 
 PROJECT_NAME = 'viper-seo'
 HOMEPAGE = 'http://viper-seo.com/'
@@ -11,8 +11,6 @@ QUEUE_FILE = PROJECT_NAME + '/queue.txt'
 CRAWLED_FILE = PROJECT_NAME + '/crawled.txt'
 NUMBER_OF_THREADS = 8
 queue = Queue()
-Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME)
-
 
 # Create worker threads (will die when main exits)
 def create_workers():
@@ -44,7 +42,3 @@ def crawl():
     if len(queued_links) > 0:
         print(str(len(queued_links)) + ' links in the queue')
         create_jobs()
-
-
-create_workers()
-crawl()
